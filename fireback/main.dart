@@ -137,9 +137,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             DataColumn(
                               label: Text('電量'),
                             ),
-                            DataColumn(
+                            /*DataColumn(
                               label: Text('光譜圖'),
-                            ),
+                            ),*/
                             DataColumn(
                               label: Text('工作狀態'),
                             ),
@@ -169,6 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<DataRow> createRows(QuerySnapshot snapshot) {
     List<DataRow> list = snapshot.documents.map(
           (DocumentSnapshot documentSnapshot) {
+        selector(documentSnapshot['alarm']);
         return DataRow(
           cells: [
             DataCell(
@@ -203,12 +204,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            DataCell(
+            /*DataCell(
               IconButton(
                 icon: Icon(Icons.photo),
                 onPressed: () {},
               ),
-            ),
+            ),*/
             DataCell(
               Text(
                 documentSnapshot['time'],
@@ -340,6 +341,7 @@ lists choose = lists.number;
 var subscription;
 int powered;
 bool ring = true;
+String alarm;
 
 Stream<QuerySnapshot> _stream(var change) {
   switch (change) {
@@ -380,12 +382,16 @@ Color getColor2(String power) {
   } else if (powered > 25 && powered < 51) {
     return Colors.yellow;
   } else if (powered > 0 && powered < 26) {
-    if (powered == 25) {
-      judge(ring);
-    }
+    selector(alarm);
     return Colors.red;
   } else {
     return Colors.black12;
+  }
+}
+
+void selector(String alarm) {
+  if (alarm == '1') {
+    judge(ring);
   }
 }
 

@@ -21,6 +21,7 @@ void startServiceInPlatform() async {
     debugPrint(data);
   }
 }
+
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
 
@@ -28,7 +29,7 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback onTap;
 //result.device.name.length > 0&&
   Widget _buildTitle(BuildContext context) {
-    if (result.device.name=='NTUT_LAB321_Product') {
+    if (result.device.name == 'NTUT_LAB321_Product') {
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,8 +44,7 @@ class ScanResultTile extends StatelessWidget {
           )
         ],
       );
-    }
-    else {
+    } else {
       return Text(result.device.id.toString());
     }
   }
@@ -104,21 +104,21 @@ class ScanResultTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(result.device.name=='NTUT_LAB321_Product'){  //只顯現固定裝置
+    if (result.device.name == 'NTUT_LAB321_Product') {
+      //只顯現固定裝置
 
       return ExpansionTile(
         title: _buildTitle(context),
         leading: Text(result.rssi.toString()),
-        trailing:
-        RaisedButton(
+        trailing: RaisedButton(
           child: Text('CONNECT'),
           color: Colors.black,
           textColor: Colors.white,
           onPressed: (result.advertisementData.connectable) ? onTap : null,
         ),
         children: <Widget>[
-          _buildAdvRow(
-              context, 'Complete Local Name', result.advertisementData.localName),
+          _buildAdvRow(context, 'Complete Local Name',
+              result.advertisementData.localName),
           _buildAdvRow(context, 'Tx Power Level',
               '${result.advertisementData.txPowerLevel ?? 'N/A'}'),
           _buildAdvRow(
@@ -131,126 +131,122 @@ class ScanResultTile extends StatelessWidget {
               context,
               'Service UUIDs',
               (result.advertisementData.serviceUuids.isNotEmpty)
-                  ? result.advertisementData.serviceUuids.join(', ').toUpperCase()
+                  ? result.advertisementData.serviceUuids
+                  .join(', ')
+                  .toUpperCase()
                   : 'N/A'),
-          _buildAdvRow(context, 'Service Data',
-              getNiceServiceData(result.advertisementData.serviceData) ?? 'N/A'),
+          _buildAdvRow(
+              context,
+              'Service Data',
+              getNiceServiceData(result.advertisementData.serviceData) ??
+                  'N/A'),
         ],
-      );}
-    else{
-      return   Container(width: 0,height: 0,);
-
+      );
+    } else {
+      return Container(
+        width: 0,
+        height: 0,
+      );
     }
   }
 }
 
-class ServiceTile extends StatefulWidget{
-  ServiceTile({
-    @required this.service,
-    this.characteristicTiles,
-    Key key
-  });
+class ServiceTile extends StatefulWidget {
+  ServiceTile({@required this.service, this.characteristicTiles, Key key});
 
   final BluetoothService service;
   final List<CharacteristicTile> characteristicTiles;
 
   @override
-  _ServiceTile createState() => _ServiceTile(service: service,
-      characteristicTiles: characteristicTiles);
+  _ServiceTile createState() =>
+      _ServiceTile(service: service, characteristicTiles: characteristicTiles);
 }
 
 class _ServiceTile extends State<ServiceTile> {
-  _ServiceTile({
-    @required this.service,
-    this.characteristicTiles,
-    Key key
-  });
+  _ServiceTile({@required this.service, this.characteristicTiles, Key key});
   final BluetoothService service;
   final List<CharacteristicTile> characteristicTiles;
 
-
-  var selectItemValue,selectItemValue1,selectItemValue2;int power=0;
+  var selectItemValue, selectItemValue1, selectItemValue2;
+  int power = 0;
   @override
   Widget build(BuildContext context) {
     startServiceInPlatform();
 
-    if('0x${service.uuid.toString().toUpperCase().substring(4, 8)}'==
-        '0x1801'||'0x${service.uuid.toString().toUpperCase().substring(4, 8)}'==
-        '0x1523'){
-      return Container(height: 0.0,);
+    if ('0x${service.uuid.toString().toUpperCase().substring(4, 8)}' ==
+        '0x1801' ||
+        '0x${service.uuid.toString().toUpperCase().substring(4, 8)}' ==
+            '0x1523') {
+      return Container(
+        height: 0.0,
+      );
     }
-    if('0x${service.uuid.toString().toUpperCase().substring(4, 8)}'==
-        '0x1800'){
+    if ('0x${service.uuid.toString().toUpperCase().substring(4, 8)}' ==
+        '0x1800') {
+      return ListView(shrinkWrap: true, children: <Widget>[
+        Card(
+          child: Card(
+              child: Row(children: <Widget>[
+                Text('下拉選單請選擇室、床號 ',
+                    style: TextStyle(color: Colors.black, fontSize: 16.0)),
+                Builder(builder: (BuildContext context) {
+                  return DropdownButtonHideUnderline(
+                    child: new DropdownButton(
+                      hint: new Text('室'),
+                      //設置這個value之後，選中對應位置的item,
+                      //再次呼出下拉菜單，會自動定位item位置在當前按鈕顯示的位置處
+                      value: selectItemValue,
+                      items: generateItemList(),
+                      onChanged: (T) {
+                        setState(() {
+                          selectItemValue = T;
+                          //依照deviceID上傳對應firebase的documentID
+                          if (selectItemValue != null && selectItemValue1 != null) {
+                            Firestore.instance
+                                .collection('NTUTLab321')
+                                .document('${service.deviceId.toString()}')
+                                .updateData({
+                              'title': selectItemValue + '-' + selectItemValue1
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  );
+                }),
+                Builder(builder: (BuildContext context) {
+                  return DropdownButtonHideUnderline(
+                    child: new DropdownButton(
+                      hint: new Text('床號'),
+                      value: selectItemValue1,
+                      items: generateItemList1(),
+                      onChanged: (T) {
+                        setState(() {
+                          selectItemValue1 = T;
+                          if (selectItemValue != null && selectItemValue1 != null) {
+                            Firestore.instance
+                                .collection('NTUTLab321')
+                                .document('${service.deviceId.toString()}')
+                                .updateData({
+                              'title': selectItemValue + '-' + selectItemValue1
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  );
+                }),
+              ])),
+        ),
+      ]);
+    }
 
-      return   ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Card(
-              child:
-              Card(
-                  child:
-                  Row(
-                      children:<Widget>[
-                        Text('下拉選單請選擇室、床號 ',
-                            style:TextStyle(color: Colors.black, fontSize: 16.0)),
-                        Builder(
-                            builder: (BuildContext context) {
-
-                              return DropdownButtonHideUnderline(
-                                child: new DropdownButton(
-                                  hint: new Text('室'),
-                                  //設置這個value之後，選中對應位置的item,
-                                  //再次呼出下拉菜單，會自動定位item位置在當前按鈕顯示的位置處
-                                  value: selectItemValue,
-                                  items: generateItemList(),
-                                  onChanged: (T){
-                                    setState(() {
-                                      selectItemValue=T;
-                                      //依照deviceID上傳對應firebase的documentID
-                                      if(selectItemValue!=null&&selectItemValue1!=null){
-                                        Firestore.instance.collection('NTUTLab321').document('${service.deviceId.toString()}')
-                                            .updateData({'title': selectItemValue+'-'+selectItemValue1 });
-                                      }
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                        Builder(
-                            builder: (BuildContext context) {
-
-                              return DropdownButtonHideUnderline(
-                                child: new DropdownButton(
-                                  hint: new Text('床號'),
-                                  value: selectItemValue1,
-                                  items: generateItemList1(),
-                                  onChanged: (T){
-                                    setState(() {
-                                      selectItemValue1=T;
-                                      if(selectItemValue!=null&&selectItemValue1!=null){
-
-                                        Firestore.instance.collection('NTUTLab321').document('${service.deviceId.toString()}')
-                                            .updateData({'title': selectItemValue+'-'+selectItemValue1 });
-
-                                      }
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                      ])),
-            ),]
-      );}
-
-    if (characteristicTiles.length > 0
-    ) {
-
+    if (characteristicTiles.length > 0) {
       return ExpansionTile(
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-
             Text('Service'),
             Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}',
                 style: Theme.of(context)
@@ -269,7 +265,6 @@ class _ServiceTile extends State<ServiceTile> {
         Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}'),
       );
     }
-
   }
 }
 
@@ -291,8 +286,7 @@ class CharacteristicTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    List<String> message=[];
+    List<String> message = [];
     List<DateTime> _events = [];
     return StreamBuilder<List<int>>(
       stream: characteristic.value,
@@ -300,260 +294,249 @@ class CharacteristicTile extends StatelessWidget {
       builder: (c, snapshot) {
         final value = snapshot.data;
 
-        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}'==
-            '0x1504'){
-          if(value.toString()=='[1]'){
+        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}' ==
+            '0x1504') {
+          if (value.toString() == '[1]') {
             _events.insert(0, new DateTime.now());
-            message.insert(0,'需更換');
-            Firestore.instance.collection('NTUTLab321').document('${characteristic.deviceId.toString()}')
-                .updateData({'change':value.toString().substring(1,2)});
-            return
-              ListView(
-                shrinkWrap: true,
-                children:<Widget>[
-                  Card(
-                    child: Row(
-                        children: <Widget>[
-                          Chip(label: Text('液面高度',
-                              style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                          Container(
-                              width: 100,
-                              height: 20,
-                              color: Colors.red
-                          ),])
-                    ,),
-                  Container(
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.black12,
-                    height: 50,
-                    child: new ListView.builder(
-                      itemCount: _events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime timestamp = _events[index];
-                        String message2=message[index];
-                        Firestore.instance
-                            .collection("NTUTLab321")
-                            .document('${characteristic.deviceId.toString()}')
-                            .updateData({'time': DateFormat("yyyy-MM-dd hh:mm:ss").format(_events[0])+message[0] });
-                        return InputDecorator(
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 0.0),
-                                labelStyle: TextStyle(color: Colors.black, fontSize: 20.0),
-                                labelText: message2
-                            ),
-                            child: new Text(new DateFormat("yyyy-MM-dd hh:mm:ss").format(timestamp), style: TextStyle(color: Colors.black, fontSize: 16.0))
-                        );
-                      },
+            message.insert(0, '需更換');
+            Firestore.instance
+                .collection('NTUTLab321')
+                .document('${characteristic.deviceId.toString()}')
+                .updateData({'change': value.toString().substring(1, 2)});
+            return ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Card(
+                  child: Row(children: <Widget>[
+                    Chip(
+                      label: Text('液面高度',
+                          style:
+                          TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
+                    Container(width: 100, height: 20, color: Colors.red),
+                  ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(5),
+                  color: Colors.black12,
+                  height: 50,
+                  child: new ListView.builder(
+                    itemCount: _events.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DateTime timestamp = _events[index];
+                      String message2 = message[index];
+                      Firestore.instance
+                          .collection("NTUTLab321")
+                          .document('${characteristic.deviceId.toString()}')
+                          .updateData({
+                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                            .format(_events[0]) +
+                            message[0]
+                      });
+                      return InputDecorator(
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.0, top: 10.0, bottom: 0.0),
+                              labelStyle: TextStyle(
+                                  color: Colors.black, fontSize: 20.0),
+                              labelText: message2),
+                          child: new Text(
+                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                                  .format(timestamp),
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 16.0)));
+                    },
                   ),
-                ],);
-          }else if(value.toString()=='[0]'){
-            Firestore.instance.collection('NTUTLab321').document('${characteristic.deviceId.toString()}')
-                .updateData({'change':value.toString().substring(1,2)});
+                ),
+              ],
+            );
+          } else if (value.toString() == '[0]') {
+            Firestore.instance
+                .collection('NTUTLab321')
+                .document('${characteristic.deviceId.toString()}')
+                .updateData({'change': value.toString().substring(1, 2)});
             _events.insert(0, new DateTime.now());
-            message.insert(0,'不需更換');
-            return
-
-              ListView(
-                shrinkWrap: true,
-                children:<Widget>[
-                  Card(
-                    child: Row(
-                        children: <Widget>[
-                          Chip(label: Text('液面高度',
-                              style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                          Container(
-                              width: 100,
-                              height: 20,
-                              color: Colors.green
-                          ),])
-                    ,),
-                  Container(
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.black12,
-                    height: 50,
-                    child: new ListView.builder(
-                      itemCount: _events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime timestamp = _events[index];
-                        String message2=message[index];
-                        Firestore.instance
-                            .collection("NTUTLab321")
-                            .document('${characteristic.deviceId.toString()}')
-                            .updateData({'time': DateFormat("yyyy-MM-dd hh:mm:ss").format(_events[0])+message[0] });
-                        return InputDecorator(
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 0.0),
-                                labelStyle: TextStyle(color: Colors.black, fontSize: 20.0),
-                                labelText: message2
-                            ),
-                            child: new Text(new DateFormat("yyyy-MM-dd hh:mm:ss").format(timestamp), style: TextStyle(color: Colors.black, fontSize: 16.0))
-                        );
-                      },
+            message.insert(0, '不需更換');
+            return ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Card(
+                  child: Row(children: <Widget>[
+                    Chip(
+                      label: Text('液面高度',
+                          style:
+                          TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
+                    Container(width: 100, height: 20, color: Colors.green),
+                  ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(5),
+                  color: Colors.black12,
+                  height: 50,
+                  child: new ListView.builder(
+                    itemCount: _events.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DateTime timestamp = _events[index];
+                      String message2 = message[index];
+                      Firestore.instance
+                          .collection("NTUTLab321")
+                          .document('${characteristic.deviceId.toString()}')
+                          .updateData({
+                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                            .format(_events[0]) +
+                            message[0]
+                      });
+                      return InputDecorator(
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.0, top: 10.0, bottom: 0.0),
+                              labelStyle: TextStyle(
+                                  color: Colors.black, fontSize: 20.0),
+                              labelText: message2),
+                          child: new Text(
+                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                                  .format(timestamp),
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 16.0)));
+                    },
                   ),
-                ],);
-          }
-          else{
-
-
-
-          }
-
+                ),
+              ],
+            );
+          } else {}
         }
-        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}'==
-            '0x1505'){
-          if(value.toString()=='[1]'){
+        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}' ==
+            '0x1505') {
+          if (value.toString() == '[1]') {
             _events.insert(0, new DateTime.now());
-            message.insert(0,'點滴模式');
-            Firestore.instance.collection('NTUTLab321').document('${characteristic.deviceId.toString()}')
-                .updateData({'modedescription':"點滴"});
-            return
-
-
-              ListView(
-                shrinkWrap: true,
-                children:<Widget>[
-                  Card(
-                    child:
-                    Row(
-                        children: <Widget>[
-                          Chip(label: Text('設備模式',
-                              style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                          Container(
-                            width: 100,
-                            height: 20,
-                            child:  Text('點滴模式'),
-                          ),]
-                    ),),
-                  Container(
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.black12,
-                    height: 50,
-                    child: new ListView.builder(
-                      itemCount: _events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime timestamp = _events[index];
-                        String message2=message[index];
-                        Firestore.instance
-                            .collection("NTUTLab321")
-                            .document('${characteristic.deviceId.toString()}')
-                            .updateData({'time': DateFormat("yyyy-MM-dd hh:mm:ss").format(_events[0])+message[0] });
-                        return InputDecorator(
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 0.0),
-                                labelStyle: TextStyle(color: Colors.black, fontSize: 20.0),
-                                labelText: message2
-                            ),
-                            child: new Text(new DateFormat("yyyy-MM-dd hh:mm:ss").format(timestamp), style: TextStyle(color: Colors.black, fontSize: 16.0))
-                        );
-                      },
+            message.insert(0, '點滴模式');
+            Firestore.instance
+                .collection('NTUTLab321')
+                .document('${characteristic.deviceId.toString()}')
+                .updateData({'modedescription': "點滴"});
+            return ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Card(
+                  child: Row(children: <Widget>[
+                    Chip(
+                      label: Text('設備模式',
+                          style:
+                          TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
-                  ),
-                ],);
-
-          }else if(value.toString()=='[0]'){
-            _events.insert(0, new DateTime.now());
-            message.insert(0,'尿袋模式');
-            Firestore.instance.collection('NTUTLab321').document('${characteristic.deviceId.toString()}')
-                .updateData({'modedescription':"尿袋"});
-            return
-              ListView(
-                shrinkWrap: true,
-                children:<Widget>[
-                  Card(
-                    child:
-                    Row(
-                        children: <Widget>[
-                          Chip(label: Text('設備模式',
-                              style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                          Container(
-                            width: 100,
-                            height: 20,
-                            child:  Text('尿袋模式'),
-                          ),]
-                    ),),
-                  Container(
-                    margin: const EdgeInsets.all(5),
-                    color: Colors.black12,
-                    height: 50,
-                    child: new ListView.builder(
-                      itemCount: _events.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        DateTime timestamp = _events[index];
-                        String message2=message[index];
-                        Firestore.instance
-                            .collection("NTUTLab321")
-                            .document('${characteristic.deviceId.toString()}')
-                            .updateData({'time': DateFormat("yyyy-MM-dd hh:mm:ss").format(_events[0])+message[0] });
-                        return InputDecorator(
-                            decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(left: 10.0, top: 10.0, bottom: 0.0),
-                                labelStyle: TextStyle(color: Colors.black, fontSize: 20.0),
-                                labelText: message2
-                            ),
-                            child: new Text(new DateFormat("yyyy-MM-dd hh:mm:ss").format(timestamp), style: TextStyle(color: Colors.black, fontSize: 16.0))
-                        );
-                      },
-                    ),
-                  ),
-                ],);
-          }
-        }
-        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}'==
-            '0x1514'){
-
-          return
-
-            Card(
-              child: Row(
-                  children: <Widget>[
-                    Chip(label: Text('剩餘電力',
-                        style:TextStyle(color: Colors.black, fontSize: 20.0)),),
                     Container(
-                        width: 100,
-                        height: 20,
-                        color: Colors.green
-                    ),])
-              ,);
-
-          //  }
-          /*      if(value.toString()=='[85]'){
-           //     if(power==85){
-          //      Firestore.instance.collection('tests').document('1')
-           //         .updateData({'power':value.toString().substring(1,3)});}
-                return
-
-                      Card(
-                        child: Row(
-                            children: <Widget>[
-                              Chip(label: Text('剩餘電力',
-                                  style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                              Container(
-                                  width: 100,
-                                  height: 20,
-                                  color: Colors.yellow
-                              ),])
-                        ,);
-              }
-              if(value.toString()=='[81]'){
-
-           //     Firestore.instance.collection('tests').document('1')
-          //          .updateData({'power':value.toString().substring(1,3)});
-                return
-
-                      Card(
-                        child: Row(
-                            children: <Widget>[
-                              Chip(label: Text('剩餘電力',
-                                  style:TextStyle(color: Colors.black, fontSize: 20.0)),),
-                              Container(
-                                  width: 100,
-                                  height: 20,
-                                  color: Colors.red
-                              ),])
-                        ,);
-              }*/
+                      width: 100,
+                      height: 20,
+                      child: Text('點滴模式'),
+                    ),
+                  ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(5),
+                  color: Colors.black12,
+                  height: 50,
+                  child: new ListView.builder(
+                    itemCount: _events.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DateTime timestamp = _events[index];
+                      String message2 = message[index];
+                      Firestore.instance
+                          .collection("NTUTLab321")
+                          .document('${characteristic.deviceId.toString()}')
+                          .updateData({
+                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                            .format(_events[0]) +
+                            message[0]
+                      });
+                      return InputDecorator(
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.0, top: 10.0, bottom: 0.0),
+                              labelStyle: TextStyle(
+                                  color: Colors.black, fontSize: 20.0),
+                              labelText: message2),
+                          child: new Text(
+                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                                  .format(timestamp),
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 16.0)));
+                    },
+                  ),
+                ),
+              ],
+            );
+          } else if (value.toString() == '[0]') {
+            _events.insert(0, new DateTime.now());
+            message.insert(0, '尿袋模式');
+            Firestore.instance
+                .collection('NTUTLab321')
+                .document('${characteristic.deviceId.toString()}')
+                .updateData({'modedescription': "尿袋"});
+            return ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                Card(
+                  child: Row(children: <Widget>[
+                    Chip(
+                      label: Text('設備模式',
+                          style:
+                          TextStyle(color: Colors.black, fontSize: 20.0)),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 20,
+                      child: Text('尿袋模式'),
+                    ),
+                  ]),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(5),
+                  color: Colors.black12,
+                  height: 50,
+                  child: new ListView.builder(
+                    itemCount: _events.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      DateTime timestamp = _events[index];
+                      String message2 = message[index];
+                      Firestore.instance
+                          .collection("NTUTLab321")
+                          .document('${characteristic.deviceId.toString()}')
+                          .updateData({
+                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                            .format(_events[0]) +
+                            message[0]
+                      });
+                      return InputDecorator(
+                          decoration: InputDecoration(
+                              contentPadding: EdgeInsets.only(
+                                  left: 10.0, top: 10.0, bottom: 0.0),
+                              labelStyle: TextStyle(
+                                  color: Colors.black, fontSize: 20.0),
+                              labelText: message2),
+                          child: new Text(
+                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                                  .format(timestamp),
+                              style: TextStyle(
+                                  color: Colors.black, fontSize: 16.0)));
+                    },
+                  ),
+                ),
+              ],
+            );
+          }
+        }
+        if ('0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}' ==
+            '0x1514') {
+          return Card(
+            child: Row(children: <Widget>[
+              Chip(
+                label: Text('剩餘電力',
+                    style: TextStyle(color: Colors.black, fontSize: 20.0)),
+              ),
+              Container(width: 100, height: 20, color: Colors.green),
+            ]),
+          );
         }
         return ExpansionTile(
           title: ListTile(
@@ -680,18 +663,19 @@ class AdapterStateTile extends StatelessWidget {
 
 List<DropdownMenuItem> generateItemList() {
   List<DropdownMenuItem> items = new List();
-  for(int i=1,j=1;i<=10;i++,j++){
+  for (int i = 1, j = 1; i <= 10; i++, j++) {
     DropdownMenuItem i = new DropdownMenuItem(
-        value:'0'+j.toString(), child: new Text(j.toString()+'室'));
+        value: '0' + j.toString(), child: new Text(j.toString() + '室'));
     items.add(i);
   }
   return items;
 }
+
 List<DropdownMenuItem> generateItemList1() {
   List<DropdownMenuItem> items1 = new List();
-  for(int k=1,m=1;k<=10;k++,m++){
+  for (int k = 1, m = 1; k <= 10; k++, m++) {
     DropdownMenuItem k = new DropdownMenuItem(
-        value: '0'+m.toString(), child: new Text(m.toString()+'床'));
+        value: '0' + m.toString(), child: new Text(m.toString() + '床'));
     items1.add(k);
   }
   return items1;
@@ -699,12 +683,12 @@ List<DropdownMenuItem> generateItemList1() {
 
 List<DropdownMenuItem> generateItemList2() {
   List<DropdownMenuItem> items2 = new List();
-  DropdownMenuItem item1 = new DropdownMenuItem(
-      value: '0', child: new Text('尿袋'));
-  DropdownMenuItem item2 = new DropdownMenuItem(
-      value: '1', child: new Text('點滴'));
+  DropdownMenuItem item1 =
+  new DropdownMenuItem(value: '0', child: new Text('尿袋'));
+  DropdownMenuItem item2 =
+  new DropdownMenuItem(value: '1', child: new Text('點滴'));
 
   items2.add(item1);
   items2.add(item2);
   return items2;
-}                   
+}

@@ -1,7 +1,4 @@
-//import 'dart:io';
-
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_firecloud/Pagebluetooth/bluetooth.dart';
 import 'package:connectivity/connectivity.dart';
 
@@ -57,9 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return WillPopScope(
       onWillPop: _onWillPop,
        child: Scaffold(
-    //      appBar: AppBar(
-     //       title: Text('點滴、尿袋液面高度與光譜感智慧監控系統'),
-     //     ),
           body:
           PageBluetooth(),
           ),

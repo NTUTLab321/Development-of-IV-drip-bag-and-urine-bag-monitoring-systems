@@ -2,20 +2,13 @@
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'widgets.dart';
 import 'package:cron/cron.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-//import 'package:vibration/vibration.dart';
-//import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-//import 'package:intl/intl.dart';
-//import "package:flutter_firecloud/Pagefirebase/color.dart";
-//import 'package:flutter_firecloud/Pagefirebase/PageFirebase.dart';
-//import 'package:shared_preferences/shared_preferences.dart';
+
 class PageBluetooth extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -38,23 +31,13 @@ class PageBluetooth extends StatelessWidget {
   }
 }
 
-/*void startServiceInPlatform() async {
-  if (Platform.isAndroid) {
-    var methodChannel = MethodChannel("decide background");
-    String data = await methodChannel.invokeMethod("startService");
-    debugPrint(data);
-  }
-}*/
-
 class BluetoothOffScreen extends StatefulWidget {
   @override
   _BluetoothOffScreen createState() => _BluetoothOffScreen();
 }
 
 class _BluetoothOffScreen extends State<BluetoothOffScreen> {
-
   @override
-
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlue,     //將背景設為藍色
@@ -81,7 +64,6 @@ class FindDevicesScreen extends StatefulWidget {
 
 class _FindDevicesScreen extends State<FindDevicesScreen> {
   @override
-
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -179,15 +161,12 @@ class DeviceScreen extends StatefulWidget {
   _DeviceScreen createState() => _DeviceScreen(device: device);
 }
 class _DeviceScreen extends State<DeviceScreen> {
-  //  DeviceScreen({Key key, this.device}) : super(key: key);
   _DeviceScreen({
     @required this.device,
     Key key
   }); //使用該字段的類型並初始化
-  //final device;
 
   final BluetoothDevice device;
-
 
   //列出所有的服務
   List<Widget> _buildServiceTiles(List<BluetoothService> services) {
@@ -200,17 +179,7 @@ class _DeviceScreen extends State<DeviceScreen> {
           (s) => ServiceTile(
         service: s,
         characteristicTiles: s.characteristics.map((c) {
-          Firestore.instance
-              .collection('NTUTLab321')
-              .document('${c.deviceId.toString()}')
-              .setData({
-            'change': '0',
-            'modedescription': '點滴',
-            'power': '100',
-            'time': 'XXXX',
-            'title': '01-01',
-            'alarm': '0'
-          }, merge: true);
+
           if ('0x${c.uuid.toString().toUpperCase().substring(4, 8)}' == '0x1514' ||
               '0x${c.uuid.toString().toUpperCase().substring(4, 8)}' ==
                   '0x1504' ||
@@ -228,8 +197,6 @@ class _DeviceScreen extends State<DeviceScreen> {
 
               Future update1() async {
                 List<int> value = await c.read();
-                //   print(value);
-
                 _events.insert(0, new DateTime.now());
 
                 if (value.toString().substring(1, 2) == '1') {
@@ -306,7 +273,17 @@ class _DeviceScreen extends State<DeviceScreen> {
 
               Future update1() async {
                 List<int> value = await c.read();
-                if (25 >= value[0] && alarm > value[0]) {
+                if (10 >= value[0] && alarm > value[0]) {
+                //放電
+                Firestore.instance
+                    .collection('NTUTLab321')
+                    .document('${c.deviceId.toString()}')
+                    .updateData({
+                'alarm': '1',
+                'power': value.toString().substring(1, 2)
+                }); //設置後端響鈴
+                alarm = value[0];
+                } else if (25 >= value[0] && alarm > value[0]) {
                   //放電
                   Firestore.instance
                       .collection('NTUTLab321')
@@ -314,16 +291,6 @@ class _DeviceScreen extends State<DeviceScreen> {
                       .updateData({
                     'alarm': '1',
                     'power': value.toString().substring(1, 3)
-                  }); //設置後端響鈴
-                  alarm = value[0];
-                } else if (10 >= value[0] && alarm > value[0]) {
-                  //放電
-                  Firestore.instance
-                      .collection('NTUTLab321')
-                      .document('${c.deviceId.toString()}')
-                      .updateData({
-                    'alarm': '1',
-                    'power': value.toString().substring(1, 2)
                   }); //設置後端響鈴
                   alarm = value[0];
                 } else if (alarm < value[0]) {
@@ -336,8 +303,8 @@ class _DeviceScreen extends State<DeviceScreen> {
                   });
                   alarm = value[0];
                 }
-              }
 
+              }
               update1();
             });
           }
@@ -425,7 +392,19 @@ class _DeviceScreen extends State<DeviceScreen> {
                     children: <Widget>[
                       IconButton(
                         icon: Icon(Icons.play_arrow),
-                        onPressed: () => device.discoverServices(),
+                        onPressed: () {
+                          Firestore.instance
+                              .collection('NTUTLab321')
+                              .document('${device.id.toString()}')
+                              .setData({
+                            'change': '0',
+                            'modedescription': '點滴',
+                            'power': '100',
+                            'time': 'XXXX',
+                            'title': '01-01',
+                            'alarm': '0'
+                          }, merge: true);
+                            device.discoverServices();},
                       ),
                       IconButton(
                         icon: SizedBox(

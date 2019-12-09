@@ -3,16 +3,10 @@
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:io';
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-//import 'package:flutter_firecloud/Pagebluetooth/bluetooth.dart';
-//import "package:flutter_firecloud/Pagefirebase/color.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-//import 'package:vibration/vibration.dart';
-//import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter/services.dart';
-//import 'package:cron/cron.dart';
 
 void startServiceInPlatform() async {
   if (Platform.isAndroid) {
@@ -24,10 +18,8 @@ void startServiceInPlatform() async {
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
-
   final ScanResult result;
   final VoidCallback onTap;
-//result.device.name.length > 0&&
   Widget _buildTitle(BuildContext context) {
     if (result.device.name == 'NTUT_LAB321_Product') {
       return Column(
@@ -313,7 +305,7 @@ class CharacteristicTile extends StatelessWidget {
                           style:
                           TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
-                    Container(width: 100, height: 20, color: Colors.red),
+                    Container(width: 100, height: 20, color: Colors.redAccent),
                   ]),
                 ),
                 Container(
@@ -367,7 +359,7 @@ class CharacteristicTile extends StatelessWidget {
                           style:
                           TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
-                    Container(width: 100, height: 20, color: Colors.green),
+                    Container(width: 100, height: 20, color: Colors.greenAccent),
                   ]),
                 ),
                 Container(
@@ -665,7 +657,8 @@ List<DropdownMenuItem> generateItemList() {
   List<DropdownMenuItem> items = new List();
   for (int i = 1, j = 1; i <= 10; i++, j++) {
     DropdownMenuItem i = new DropdownMenuItem(
-        value: '0' + j.toString(), child: new Text(j.toString() + '室'));
+        value: '0' + j.toString(), child: new Text(j.toString() + '室')
+        );
     items.add(i);
   }
   return items;

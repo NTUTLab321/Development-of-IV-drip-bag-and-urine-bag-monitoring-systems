@@ -189,6 +189,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     documentSnapshot['change'],
                   ),
                 ),
+                title: Text(
+                  remind(
+                    documentSnapshot['change'],
+                  ),
+                ),
               ),
             ),
             DataCell(
@@ -392,6 +397,14 @@ Color getColor2(String power) {
 void selector(String alarm) {
   if (alarm == '1') {
     judge(ring);
+  }
+}
+
+remind(String txt) {
+  if (txt == '1') {
+    return 'check';
+  } else {
+    return '';
   }
 }
 

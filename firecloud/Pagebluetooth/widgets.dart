@@ -301,11 +301,18 @@ class CharacteristicTile extends StatelessWidget {
                 Card(
                   child: Row(children: <Widget>[
                     Chip(
-                      label: Text('液面高度',
+                      label: Text('液體狀態',
                           style:
                           TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
-                    Container(width: 100, height: 20, color: Colors.redAccent),
+                    Container(
+                      width: 100, height: 20, color: Colors.redAccent,
+                    ),
+                    Container(
+                      child: Text(
+                        'check', style: TextStyle(color: Colors.black,fontSize: 20.0),
+                      ),
+                    ),
                   ]),
                 ),
                 Container(
@@ -321,7 +328,7 @@ class CharacteristicTile extends StatelessWidget {
                           .collection("NTUTLab321")
                           .document('${characteristic.deviceId.toString()}')
                           .updateData({
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -333,7 +340,7 @@ class CharacteristicTile extends StatelessWidget {
                                   color: Colors.black, fontSize: 20.0),
                               labelText: message2),
                           child: new Text(
-                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                              new DateFormat("yyyy-MM-dd HH:mm:ss")
                                   .format(timestamp),
                               style: TextStyle(
                                   color: Colors.black, fontSize: 16.0)));
@@ -355,7 +362,7 @@ class CharacteristicTile extends StatelessWidget {
                 Card(
                   child: Row(children: <Widget>[
                     Chip(
-                      label: Text('液面高度',
+                      label: Text('液體狀態',
                           style:
                           TextStyle(color: Colors.black, fontSize: 20.0)),
                     ),
@@ -375,7 +382,7 @@ class CharacteristicTile extends StatelessWidget {
                           .collection("NTUTLab321")
                           .document('${characteristic.deviceId.toString()}')
                           .updateData({
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -387,7 +394,7 @@ class CharacteristicTile extends StatelessWidget {
                                   color: Colors.black, fontSize: 20.0),
                               labelText: message2),
                           child: new Text(
-                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                              new DateFormat("yyyy-MM-dd HH:mm:ss")
                                   .format(timestamp),
                               style: TextStyle(
                                   color: Colors.black, fontSize: 16.0)));
@@ -437,7 +444,7 @@ class CharacteristicTile extends StatelessWidget {
                           .collection("NTUTLab321")
                           .document('${characteristic.deviceId.toString()}')
                           .updateData({
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -449,7 +456,7 @@ class CharacteristicTile extends StatelessWidget {
                                   color: Colors.black, fontSize: 20.0),
                               labelText: message2),
                           child: new Text(
-                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                              new DateFormat("yyyy-MM-dd HH:mm:ss")
                                   .format(timestamp),
                               style: TextStyle(
                                   color: Colors.black, fontSize: 16.0)));
@@ -495,7 +502,7 @@ class CharacteristicTile extends StatelessWidget {
                           .collection("NTUTLab321")
                           .document('${characteristic.deviceId.toString()}')
                           .updateData({
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -507,7 +514,7 @@ class CharacteristicTile extends StatelessWidget {
                                   color: Colors.black, fontSize: 20.0),
                               labelText: message2),
                           child: new Text(
-                              new DateFormat("yyyy-MM-dd hh:mm:ss")
+                              new DateFormat("yyyy-MM-dd HH:mm:ss")
                                   .format(timestamp),
                               style: TextStyle(
                                   color: Colors.black, fontSize: 16.0)));
@@ -523,10 +530,17 @@ class CharacteristicTile extends StatelessWidget {
           return Card(
             child: Row(children: <Widget>[
               Chip(
-                label: Text('剩餘電力',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0)),
+                label: Text(
+                    '剩餘電力',
+                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                ),
               ),
-              Container(width: 100, height: 20, color: Colors.green),
+              Chip(
+                label: Text(
+                  '${value.toString}',
+                  style: TextStyle(color: Colors.black,fontSize: 20.0),
+                ),
+              ),
             ]),
           );
         }

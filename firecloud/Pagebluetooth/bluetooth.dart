@@ -345,7 +345,10 @@ class _DeviceScreen extends State<DeviceScreen> {
               String text;
               switch (snapshot.data) {
                 case BluetoothDeviceState.connected:
-                  onPressed = () => device.disconnect();
+                  onPressed = (){
+                    Firestore.instance.collection('NTUTLab321').document('${device.id.toString()}').delete();
+                    device.disconnect();
+                  };
                   text = 'DISCONNECT';
                   break;
                 case BluetoothDeviceState.disconnected:

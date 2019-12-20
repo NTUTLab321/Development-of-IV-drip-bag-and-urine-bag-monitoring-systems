@@ -410,10 +410,10 @@ class CharacteristicTile extends StatelessWidget {
           if (value.toString() == '[1]') {
             _events.insert(0, new DateTime.now());
             message.insert(0, '點滴模式');
-            Firestore.instance
-                .collection('NTUTLab321')
-                .document('${characteristic.deviceId.toString()}')
-                .updateData({'modedescription': "點滴"});
+       //     Firestore.instance
+        //        .collection('NTUTLab321')
+         //       .document('${characteristic.deviceId.toString()}')
+          //      .updateData({'modedescription': "點滴"});
             return ListView(
               shrinkWrap: true,
               children: <Widget>[
@@ -468,10 +468,10 @@ class CharacteristicTile extends StatelessWidget {
           } else if (value.toString() == '[0]') {
             _events.insert(0, new DateTime.now());
             message.insert(0, '尿袋模式');
-            Firestore.instance
-                .collection('NTUTLab321')
-                .document('${characteristic.deviceId.toString()}')
-                .updateData({'modedescription': "尿袋"});
+     //       Firestore.instance
+       //         .collection('NTUTLab321')
+         //       .document('${characteristic.deviceId.toString()}')
+           //     .updateData({'modedescription': "尿袋"});
             return ListView(
               shrinkWrap: true,
               children: <Widget>[
@@ -535,11 +535,10 @@ class CharacteristicTile extends StatelessWidget {
                     style: TextStyle(color: Colors.black, fontSize: 20.0),
                 ),
               ),
-              Chip(
-                label: Text(
-                  '${value.toString}',
-                  style: TextStyle(color: Colors.black,fontSize: 20.0),
-                ),
+              Container(
+                width: 100,
+                height: 20,
+                child: Text('${value.toString()}%'),
               ),
             ]),
           );

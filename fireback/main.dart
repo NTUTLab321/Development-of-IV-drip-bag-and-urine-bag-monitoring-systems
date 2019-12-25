@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 import 'package:flutter/services.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:wakelock/wakelock.dart';
 
 void main() {
   runApp(
@@ -33,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
         check();
       },
     );
+    Wakelock.enable();
   }
 
   Widget build(BuildContext context) {
@@ -299,6 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
           FlatButton(
             child: Text('是'),
             onPressed: () {
+              Wakelock.disable();
               FlutterRingtonePlayer.stop();
               Navigator.of(context).pop(true);
             },

@@ -211,7 +211,7 @@ class _DeviceScreen extends State<DeviceScreen> {
                       .document('${c.deviceId.toString()}')
                       .updateData({
                     'change': value.toString().substring(1, 2),
-                    'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                    'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                         .format(_events[0]) +
                         message[0]
                   });
@@ -239,7 +239,7 @@ class _DeviceScreen extends State<DeviceScreen> {
                           .document('${c.deviceId.toString()}')
                           .updateData({
                         'modedescription': '點滴',
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -253,7 +253,7 @@ class _DeviceScreen extends State<DeviceScreen> {
                           .document('${c.deviceId.toString()}')
                           .updateData({
                         'modedescription': '尿袋',
-                        'time': DateFormat("yyyy-MM-dd hh:mm:ss")
+                        'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                             .format(_events[0]) +
                             message[0]
                       });
@@ -274,15 +274,15 @@ class _DeviceScreen extends State<DeviceScreen> {
               Future update1() async {
                 List<int> value = await c.read();
                 if (10 >= value[0] && alarm > value[0]) {
-                //放電
-                Firestore.instance
-                    .collection('NTUTLab321')
-                    .document('${c.deviceId.toString()}')
-                    .updateData({
-                'alarm': '1',
-                'power': value.toString().substring(1, 2)
-                }); //設置後端響鈴
-                alarm = value[0];
+                  //放電
+                  Firestore.instance
+                      .collection('NTUTLab321')
+                      .document('${c.deviceId.toString()}')
+                      .updateData({
+                    'alarm': '1',
+                    'power': value.toString().substring(1, 2)
+                  }); //設置後端響鈴
+                  alarm = value[0];
                 } else if (25 >= value[0] && alarm > value[0]) {
                   //放電
                   Firestore.instance
@@ -407,7 +407,7 @@ class _DeviceScreen extends State<DeviceScreen> {
                             'title': '01-01',
                             'alarm': '0'
                           }, merge: true);
-                            device.discoverServices();},
+                          device.discoverServices();},
                       ),
                       IconButton(
                         icon: SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_firecloud/Pagebluetooth/bluetooth.dart';
+import 'package:fireuser/Pagebluetooth/bluetooth.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(
@@ -19,6 +20,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
+    SystemChrome.setPreferredOrientations(
+      [
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.portraitUp,
+      ],
+    );
     subscription = Connectivity().onConnectivityChanged.listen(
           (ConnectivityResult result) {
         check();
@@ -53,10 +60,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
-       child: Scaffold(
-          body:
-          PageBluetooth(),
-          ),
+      child: Scaffold(
+        body:
+        PageBluetooth(),
+      ),
     );
 
 

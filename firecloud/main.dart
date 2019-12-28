@@ -7,7 +7,7 @@ void main() {
   runApp(
     MaterialApp(
       home: MyHomePage(),
-      debugShowCheckedModeBanner:false,
+      debugShowCheckedModeBanner: false,
     ),
   );
 }
@@ -32,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+
   Future<bool> _onWillPop() {
     return showDialog(
       context: context,
@@ -55,19 +56,17 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-  @override
 
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        body:
-        PageBluetooth(),
+        body: PageBluetooth(),
       ),
     );
-
-
   }
+
   void check() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -89,4 +88,5 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 }
+
 var subscription;

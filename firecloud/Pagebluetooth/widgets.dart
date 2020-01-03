@@ -1,20 +1,20 @@
 // Copyright 2017, Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-//import 'dart:io';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-//import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 
-/*void startServiceInPlatform() async {
+void startServiceInPlatform() async {
   if (Platform.isAndroid) {
     var methodChannel = MethodChannel("decide background");
     String data = await methodChannel.invokeMethod("startService");
     debugPrint(data);
   }
-}*/
+}
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
@@ -167,7 +167,7 @@ class _ServiceTile extends State<ServiceTile> {
   int power = 0;
   @override
   Widget build(BuildContext context) {
-    //startServiceInPlatform();
+    startServiceInPlatform();
     if ('0x${service.uuid.toString().toUpperCase().substring(4, 8)}' ==
         '0x1801' ||
         '0x${service.uuid.toString().toUpperCase().substring(4, 8)}' ==
@@ -498,6 +498,7 @@ class CharacteristicTile extends StatelessWidget {
                           .document('${characteristic.deviceId.toString()}')
                           .updateData(
                         {
+                          'modedescription': '點滴',
                           'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(_events[0]) +
                               message[0]
@@ -561,6 +562,7 @@ class CharacteristicTile extends StatelessWidget {
                           .document('${characteristic.deviceId.toString()}')
                           .updateData(
                         {
+                          'modedescription': '尿袋',
                           'time': DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(_events[0]) +
                               message[0]

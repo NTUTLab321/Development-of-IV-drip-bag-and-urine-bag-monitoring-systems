@@ -65,105 +65,132 @@ class FindDevicesScreen extends StatefulWidget {
 class _FindDevicesScreen extends State<FindDevicesScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'NTUTLab321點滴、尿袋智慧監控系統',
-          style: TextStyle(fontSize: 19.4),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'NTUTLab321點滴、尿袋智慧監控系統',
+            style: TextStyle(fontSize: 19.4),
+          ),
         ),
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => FlutterBlue.instance.startScan(
-          timeout: Duration(seconds: 4),
-        ), //開始搜尋，持續4秒
-        child: SingleChildScrollView(
-          //建立一個能捲動的Widget
-          child: Column(
-            children: <Widget>[
-              StreamBuilder<List<BluetoothDevice>>(
-                //列出藍芽裝置
-                stream: Stream.periodic(
-                  Duration(seconds: 2),
-                ).asyncMap((_) => FlutterBlue.instance.connectedDevices),
-                initialData: [],
-                builder: (c, snapshot) => Column(
-                  children: snapshot.data
-                      .map(
-                        (d) => ListTile(
-                      title: Text(d.name), //藍芽名稱
-                      subtitle: Text(
-                        d.id.toString(),
-                      ), //藍芽ID
-                      trailing: StreamBuilder<BluetoothDeviceState>(
-                        stream: d.state,
-                        initialData: BluetoothDeviceState.disconnected,
-                        builder: (c, snapshot) {
-                          if (snapshot.data == //如果已經連上了，就顯示OPEN的按鈕
-                              BluetoothDeviceState.connected) {
-                            return RaisedButton(
-                              child: Text('OPEN'),
-                              onPressed: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      DeviceScreen(device: d),
+        body: RefreshIndicator(
+          onRefresh: () => FlutterBlue.instance.startScan(
+            timeout: Duration(seconds: 4),
+          ), //開始搜尋，持續4秒
+          child: SingleChildScrollView(
+            //建立一個能捲動的Widget
+            child: Column(
+              children: <Widget>[
+                StreamBuilder<List<BluetoothDevice>>(
+                  //列出藍芽裝置
+                  stream: Stream.periodic(
+                    Duration(seconds: 2),
+                  ).asyncMap((_) => FlutterBlue.instance.connectedDevices),
+                  initialData: [],
+                  builder: (c, snapshot) => Column(
+                    children: snapshot.data
+                        .map(
+                          (d) => ListTile(
+                        title: Text(d.name), //藍芽名稱
+                        subtitle: Text(
+                          d.id.toString(),
+                        ), //藍芽ID
+                        trailing: StreamBuilder<BluetoothDeviceState>(
+                          stream: d.state,
+                          initialData: BluetoothDeviceState.disconnected,
+                          builder: (c, snapshot) {
+                            if (snapshot.data == //如果已經連上了，就顯示OPEN的按鈕
+                                BluetoothDeviceState.connected) {
+                              return RaisedButton(
+                                child: Text('OPEN'),
+                                onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DeviceScreen(device: d),
+                                  ),
                                 ),
-                              ),
+                              );
+                            }
+                            return Text(
+                              snapshot.data.toString(),
                             );
-                          }
-                          return Text(
-                            snapshot.data.toString(),
-                          );
-                        },
-                      ),
-                    ),
-                  )
-                      .toList(),
-                ),
-              ),
-              StreamBuilder<List<ScanResult>>(
-                stream: FlutterBlue.instance.scanResults,
-                initialData: [],
-                builder: (c, snapshot) => Column(
-                  children: snapshot.data
-                      .map(
-                        (r) => ScanResultTile(
-                      result: r,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            r.device.connect();
-                            return DeviceScreen(device: r.device);
                           },
                         ),
                       ),
-                    ),
-                  )
-                      .toList(),
+                    )
+                        .toList(),
+                  ),
                 ),
-              ),
-            ],
+                StreamBuilder<List<ScanResult>>(
+                  stream: FlutterBlue.instance.scanResults,
+                  initialData: [],
+                  builder: (c, snapshot) => Column(
+                    children: snapshot.data
+                        .map(
+                          (r) => ScanResultTile(
+                        result: r,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              r.device.connect();
+                              return DeviceScreen(device: r.device);
+                            },
+                          ),
+                        ),
+                      ),
+                    )
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+        floatingActionButton: StreamBuilder<bool>(
+          stream: FlutterBlue.instance.isScanning,
+          initialData: false,
+          builder: (c, snapshot) {
+            if (snapshot.data) {
+              return FloatingActionButton(
+                child: Icon(Icons.stop),
+                onPressed: () => FlutterBlue.instance.stopScan(),
+                backgroundColor: Colors.red,
+              );
+            } else {
+              return FloatingActionButton(
+                child: Icon(Icons.search),
+                onPressed: () => FlutterBlue.instance.startScan(
+                  timeout: Duration(seconds: 4),
+                ),
+              );
+            }
+          },
+        ),
       ),
-      floatingActionButton: StreamBuilder<bool>(
-        stream: FlutterBlue.instance.isScanning,
-        initialData: false,
-        builder: (c, snapshot) {
-          if (snapshot.data) {
-            return FloatingActionButton(
-              child: Icon(Icons.stop),
-              onPressed: () => FlutterBlue.instance.stopScan(),
-              backgroundColor: Colors.red,
-            );
-          } else {
-            return FloatingActionButton(
-              child: Icon(Icons.search),
-              onPressed: () => FlutterBlue.instance.startScan(
-                timeout: Duration(seconds: 4),
-              ),
-            );
-          }
-        },
+    );
+  }
+
+  Future<bool> _onWillPop() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('退出提醒'),
+        content: Text('確定退出此應用程式?'),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('否'),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          FlatButton(
+            child: Text('是'),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          )
+        ],
       ),
     );
   }
@@ -208,7 +235,10 @@ class _DeviceScreen extends State<DeviceScreen> {
                   print('every one minutes');
                   Future update1() async {
                     List<int> value = await c.read();
-                    _events.insert(0, new DateTime.now());
+                    _events.insert(
+                      0,
+                      new DateTime.now(),
+                    );
                     if (value.toString().substring(1, 2) == '1') {
                       message.insert(0, '需更換');
                     } else if (value.toString().substring(1, 2) == '0') {
@@ -242,7 +272,10 @@ class _DeviceScreen extends State<DeviceScreen> {
                       () async {
                     Future update1() async {
                       List<int> value = await c.read();
-                      _events.insert(0, new DateTime.now());
+                      _events.insert(
+                        0,
+                        new DateTime.now(),
+                      );
                       if (value.toString().substring(1, 2) == '1') {
                         message.insert(0, '點滴模式');
                         if (message[1] == null ||
@@ -362,7 +395,11 @@ class _DeviceScreen extends State<DeviceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(device.name),
+        title: Text(
+          device.name,
+          style: TextStyle(fontSize: 19.9),
+        ),
+        automaticallyImplyLeading: false,
         actions: <Widget>[
           StreamBuilder<BluetoothDeviceState>(
             stream: device.state,
@@ -430,11 +467,11 @@ class _DeviceScreen extends State<DeviceScreen> {
                               .collection('NTUTLab321')
                               .document('${device.id.toString()}')
                               .setData({
-                            'change': '0',
-                            'modedescription': '點滴',
-                            'power': '100',
+                            'change': 'X',
+                            'modedescription': '初始資料',
+                            'power': '0',
                             'time': 'XXXX',
-                            'title': '01-01',
+                            'title': '00-00',
                             'alarm': '0'
                           }, merge: true);
                           device.discoverServices();

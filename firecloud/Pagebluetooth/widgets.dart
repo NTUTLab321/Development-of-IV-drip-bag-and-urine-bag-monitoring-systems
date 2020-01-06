@@ -630,20 +630,20 @@ class CharacteristicTile extends StatelessWidget {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconButton(
+              /*IconButton(
                 icon: Icon(
                   Icons.file_download,
                   color: Theme.of(context).iconTheme.color.withOpacity(0.5),
                 ),
                 onPressed: onReadPressed,
-              ),
-              IconButton(
+              ),*/
+              /*IconButton(
                 icon: Icon(
                   Icons.file_upload,
                   color: Theme.of(context).iconTheme.color.withOpacity(0.5),
                 ),
                 onPressed: onWritePressed,
-              ),
+              ),*/
               IconButton(
                 icon: Icon(
                   characteristic.isNotifying ? Icons.sync_disabled : Icons.sync,
@@ -741,12 +741,16 @@ List<DropdownMenuItem> generateItemList() {
   List<DropdownMenuItem> items = new List();
   for (int i = 1, j = 1; i < 10; i++, j++) {
     DropdownMenuItem i = new DropdownMenuItem(
-        value: '0' + j.toString(), child: new Text(j.toString() + '室'));
+      child: new Text(j.toString() + '室'),
+      value: '0' + j.toString(),
+    );
     items.add(i);
   }
   for (int i = 10, j = 10; i < 100; i++, j++) {
     DropdownMenuItem i = new DropdownMenuItem(
-        value: j.toString(), child: new Text(j.toString() + '室'));
+      child: new Text(j.toString() + '室'),
+      value: j.toString(),
+    );
     items.add(i);
   }
   return items;

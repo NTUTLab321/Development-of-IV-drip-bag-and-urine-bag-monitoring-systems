@@ -33,37 +33,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Future<bool> _onWillPop() {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('退出提醒'),
-        content: Text('確定退出此應用程式?'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('否'),
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-          ),
-          FlatButton(
-            child: Text('是'),
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        body: PageBluetooth(),
-      ),
+    return Scaffold(
+      body: PageBluetooth(),
     );
   }
 

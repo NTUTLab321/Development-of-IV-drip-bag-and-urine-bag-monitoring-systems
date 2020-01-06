@@ -10,6 +10,7 @@ void main() {
     MaterialApp(
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
+      darkTheme: ThemeData.dark(),
     ),
   );
 }

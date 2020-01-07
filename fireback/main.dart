@@ -204,7 +204,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 leading: CircleAvatar(
                   child: Text(
                     documentSnapshot['power'],
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(
+                        color: Colors.blueGrey,
+                        fontSize: 20.0
+                    ),
                   ),
                   backgroundColor: getColor2(
                     documentSnapshot['power'],

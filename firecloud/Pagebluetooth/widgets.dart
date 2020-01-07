@@ -58,8 +58,7 @@ class ScanResultTile extends StatelessWidget {
               value,
               style: Theme.of(context)
                   .textTheme
-                  .caption
-                  .apply(color: Colors.black),
+                  .caption,
               softWrap: true,
             ),
           ),
@@ -111,8 +110,6 @@ class ScanResultTile extends StatelessWidget {
         ),
         trailing: RaisedButton(
           child: Text('CONNECT'),
-          color: Colors.black,
-          textColor: Colors.white,
           onPressed: (result.advertisementData.connectable) ? onTap : null,
         ),
         children: <Widget>[
@@ -187,7 +184,7 @@ class _ServiceTile extends State<ServiceTile> {
                 children: <Widget>[
                   Text(
                     '下拉選單請選擇室、床號 ',
-                    style: TextStyle(color: Colors.black, fontSize: 16.0),
+                    style: TextStyle(fontSize: 16.0),
                   ),
                   Builder(
                     builder: (BuildContext context) {
@@ -340,7 +337,7 @@ class CharacteristicTile extends StatelessWidget {
                       Chip(
                         label: Text(
                           '液體狀態',
-                          style: TextStyle(color: Colors.black, fontSize: 20.0),
+                          style: TextStyle(fontSize: 20.0),
                         ),
                       ),
                       Container(
@@ -351,7 +348,7 @@ class CharacteristicTile extends StatelessWidget {
                       Container(
                         child: Text(
                           'check',
-                          style: TextStyle(color: Colors.black, fontSize: 20.0),
+                          style: TextStyle(fontSize: 20.0),
                         ),
                       ),
                     ],
@@ -381,12 +378,12 @@ class CharacteristicTile extends StatelessWidget {
                             contentPadding: EdgeInsets.only(
                                 left: 10.0, top: 10.0, bottom: 0.0),
                             labelStyle:
-                            TextStyle(color: Colors.black, fontSize: 20.0),
+                            TextStyle(fontSize: 20.0),
                             labelText: message2),
                         child: new Text(
                           new DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(timestamp),
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                       );
                     },
@@ -412,7 +409,7 @@ class CharacteristicTile extends StatelessWidget {
                       Chip(
                         label: Text(
                           '液體狀態',
-                          style: TextStyle(color: Colors.black, fontSize: 20.0),
+                          style: TextStyle(fontSize: 20.0),
                         ),
                       ),
                       Container(
@@ -444,12 +441,12 @@ class CharacteristicTile extends StatelessWidget {
                             contentPadding: EdgeInsets.only(
                                 left: 10.0, top: 10.0, bottom: 0.0),
                             labelStyle:
-                            TextStyle(color: Colors.black, fontSize: 20.0),
+                            TextStyle(fontSize: 20.0),
                             labelText: message2),
                         child: new Text(
                           new DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(timestamp),
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                       );
                     },
@@ -473,13 +470,13 @@ class CharacteristicTile extends StatelessWidget {
                       Chip(
                         label: Text(
                           '設備模式',
-                          style: TextStyle(color: Colors.black, fontSize: 20.0),
+                          style: TextStyle(fontSize: 20.0),
                         ),
                       ),
                       Container(
                         child: Text('點滴模式'),
                         width: 100,
-                        height: 20,
+                        height: 25,
                       ),
                     ],
                   ),
@@ -509,12 +506,12 @@ class CharacteristicTile extends StatelessWidget {
                             contentPadding: EdgeInsets.only(
                                 left: 10.0, top: 10.0, bottom: 0.0),
                             labelStyle:
-                            TextStyle(color: Colors.black, fontSize: 20.0),
+                            TextStyle(fontSize: 20.0),
                             labelText: message2),
                         child: new Text(
                           new DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(timestamp),
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                       );
                     },
@@ -537,13 +534,13 @@ class CharacteristicTile extends StatelessWidget {
                       Chip(
                         label: Text(
                           '設備模式',
-                          style: TextStyle(color: Colors.black, fontSize: 20.0),
+                          style: TextStyle(fontSize: 20.0),
                         ),
                       ),
                       Container(
                         child: Text('尿袋模式'),
                         width: 100,
-                        height: 20,
+                        height: 25,
                       ),
                     ],
                   ),
@@ -573,12 +570,12 @@ class CharacteristicTile extends StatelessWidget {
                             contentPadding: EdgeInsets.only(
                                 left: 10.0, top: 10.0, bottom: 0.0),
                             labelStyle:
-                            TextStyle(color: Colors.black, fontSize: 20.0),
+                            TextStyle(fontSize: 20.0),
                             labelText: message2),
                         child: new Text(
                           new DateFormat("yyyy-MM-dd HH:mm:ss")
                               .format(timestamp),
-                          style: TextStyle(color: Colors.black, fontSize: 16.0),
+                          style: TextStyle(fontSize: 16.0),
                         ),
                       );
                     },
@@ -596,7 +593,7 @@ class CharacteristicTile extends StatelessWidget {
                 Chip(
                   label: Text(
                     '剩餘電力',
-                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0),
                   ),
                 ),
                 Container(
@@ -702,13 +699,13 @@ class DescriptorTile extends StatelessWidget {
             ),
             onPressed: onReadPressed,
           ),
-          IconButton(
+          /*IconButton(
             icon: Icon(
               Icons.file_upload,
               color: Theme.of(context).iconTheme.color.withOpacity(0.5),
             ),
             onPressed: onWritePressed,
-          )
+          )*/
         ],
       ),
     );
@@ -722,7 +719,7 @@ class AdapterStateTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.redAccent,
+      color: Colors.red,
       child: ListTile(
         title: Text(
           'Bluetooth adapter is ${state.toString().substring(15)}',

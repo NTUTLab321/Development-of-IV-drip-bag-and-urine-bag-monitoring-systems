@@ -14,7 +14,7 @@ class PageBluetooth extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      color: Colors.lightBlue,
+      darkTheme: ThemeData.dark(),
       home: StreamBuilder<BluetoothState>(
         stream: FlutterBlue.instance.state, //Obtain an instance
         initialData: BluetoothState.unknown,
@@ -40,7 +40,7 @@ class _BluetoothOffScreen extends State<BluetoothOffScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlue, //將背景設為藍色
+      backgroundColor: Colors.blue, //將背景設為藍色
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -48,7 +48,7 @@ class _BluetoothOffScreen extends State<BluetoothOffScreen> {
             Icon(
               Icons.bluetooth_disabled, //顯示藍芽未開啟的圖案
               size: 100.0,
-              color: Colors.white54,
+              color: Colors.white70,
             ),
           ],
         ),
@@ -434,7 +434,6 @@ class _DeviceScreen extends State<DeviceScreen> {
                   style: Theme.of(context)
                       .primaryTextTheme
                       .button
-                      .copyWith(color: Colors.white),
                 ),
               );
             },
